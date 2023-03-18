@@ -1,0 +1,33 @@
+'High performance surface plasmon sensors: simulations and measurements'
+
+Wavelength of He-Ne laser: 632.8e-09  
+Start angle - end angle: 33 - 44 in degrees -> 0.5760 - 0.7679 in radians 
+Five layers: N-SF11 prism / Ag / Si3N4 / Au / substrate
+
+Layer                    Thickness                  Dielectric constant -> Refractive index (n)
+N-SF11                    1e-06                                               1.7847 + 0 * i
+Ag                        35e-09                       -17.6 + 0.67 * i       0.0798 + 4.1960 * i
+Si3N4                     150e-09                                             1.91 + 0 * i
+Au                        28e-09                       -10.8 + 1.47 * i       0.2231 + 3.294 * i
+Air                       1e-06                                               1 + 0 * i
+
+
+
+'Theoretical design of a surface plasmon resonance sensor with .. Au-Ag bimetallic film"
+
+Wavelength of He-Ne laser: 632.8e-09
+Start angle - end angle: 60 - 95 in degrees -> 1.0472 - 1.6581 in radians
+Five layers: SF11 prism / (graphene) / WS2 / Au / Ag / DI water
+
+Layer                    Thickness                  Dielectric constant -> Refractive index (n)
+SF11                      1e-06                                               1.52 + 0 * i
+(graphene                 (monolayer = 0.34)                                  3 + 1.149106 * i
+WS2                       (monolayer = 0.8)              23.85 + 3.06 * i     4.8936 + 0.3127 * i
+MoS2                      (monolayer = 0.65)                                  5.0807 + 1.1721 * i
+Au                        12e-09                       -10.98 + 1.64 * i      0.2198 + 3.3209* i
+Ag                        30e-09                       -17.81 + 0.68 * i      0.0806 + 4.2210 * i
+DI water                  1e-06                                               1.332 + 0 * i
+
+
+
+

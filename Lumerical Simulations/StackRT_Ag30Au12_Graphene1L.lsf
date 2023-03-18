@@ -1,0 +1,47 @@
+# Use stackrt and stackfield to calculate the reflection, transmission and field distribution from a 5 layer stack.
+f = linspace(c/633e-9, c/633e-9,1); # frequency vector
+theta = 60:0.1:90; # angle vector
+d = [0; 31e-9; 200e-9; 12e-9; 0.8e-9; 0.34e-9; 0]; # 4 layers
+#n1 = [1; 1.5; 2.5; 1.5; 1]; # refractive index of each layer (non-dispersive)
+
+# get RT using non-dispersive index data, and theta=0
+#RT1 = stackrt(n1,d,f);
+#field1 = stackfield(n1,d,f);
+
+# alternate refractive index vector, for dispersive materials
+nf = length(f);
+nd = length(d);
+n2 = matrix(nd,nf);
+n3 = matrix(nd,nf);
+
+n2(1,1:nf) = 1.52; # prism
+n2(2,1:nf) = getfdtdindex("YJ-Ag",f,min(f),max(f));
+n2(3,1:nf) = getfdtdindex("YJ-Si3N4",f,min(f),max(f));
+n2(4,1:nf) = getfdtdindex("YJ-Au",f,min(f),max(f));
+n2(5,1:nf) = getfdtdindex("YJ-WS2",f,min(f),max(f));
+n2(6,1:nf) = getfdtdindex("YJ-Graphene",f,min(f),max(f));
+n2(7,1:nf) = 1.334; # healthy
+
+n3(1,1:nf) = 1.52; # prism
+n3(2,1:nf) = getfdtdindex("YJ-Ag",f,min(f),max(f));
+n3(3,1:nf) = getfdtdindex("YJ-Si3N4",f,min(f),max(f));
+n3(4,1:nf) = getfdtdindex("YJ-Au",f,min(f),max(f));
+n3(5,1:nf) = getfdtdindex("YJ-WS2",f,min(f),max(f));
+n3(6,1:nf) = getfdtdindex("YJ-Graphene",f,min(f),max(f));
+n3(7,1:nf) = 1.374; # changed RI
+
+# get RT using dispersive data (n2), and theta from 0 to 45 deg
+RT2 = stackrt(n2,d,f,theta);
+RT3 = stackrt(n3,d,f,theta);
+#field2 = stackfield(n2,d,f,theta);
+
+# open data visualizer
+#visualize(RT1);
+#visualize(RT2);
+##visualize(field1);
+#visualize(field2);
+
+# make simple plots
+#plot(RT2.lambda*1e6,RT2.Rp,RT2.Rs,RT2.Tp,RT2.Ts,"wavelength (um)","Power","non-disperisive, theta=0");
+#legend("Rp","Rs","Tp","Ts");
+plot(RT2.theta,RT2.Rp,RT3.Rp,"incident angle (deg)","fraction refracted","Title");

@@ -1,0 +1,38 @@
+#############################################################
+# scriptfile: sp_film_resonance.lsf
+#
+# This file calculates the reflection spectrum for
+# an SPR simulation using Bloch boundary conditions.
+#
+# Copyright 2015, Lumerical Solutions, Inc.
+#############################################################
+clear;
+runsweep;
+# get results
+theta = pinch(getsweepdata("sweep", "source_angle")*pi/180);
+R = getsweepdata("sweep", "R");
+# T = getsweepdata("sweep", "T"); 
+# E2 = pinch(getsweepdata("sweep","E2"));
+# x = getsweepdata("sweep","x");
+f = getsweepdata("sweep","f");
+lambda = c/f;
+##
+d = 50e-9;
+# get the substrate index as run in the fdtd simulation
+n1 = 1.46234;
+n2 = getfdtdindex("Ag (Silver) - Palik (0-2um) Copy 1",f,min(f),max(f));
+n3 = 1;
+
+# use stackrt script function to get theoretical reflection
+theta1 = theta*180/pi;
+n=[n1;n2;n3];
+d=[0;d;0];
+RT=stackrt(n,d,f,theta1);
+# Rtheory=RT.Rp;
+
+#########################################
+# plot the results
+plot(theta*180/pi,R,"angle of incidence (degrees)","Reflection","Reflection vs angle");
+# legend("FDTD","theory");
+# image(x*1e9,theta*180/pi,E2,"x (nm)","angle of incidence(deg)","|E|^2 at "+num2str(c/f*1e9)+" nm");
+

@@ -1,0 +1,69 @@
+# Use stackrt and stackfield to calculate the reflection, transmission and field distribution from a 5 layer stack.
+f = linspace(c/633e-9, c/633e-9,1); # frequency vector
+theta = 60:0.1:90; # angle vector
+
+for(x=10; x<= 40; x=x+5){ 
+    for(y=10; y<= 40; y=y+5){
+        for(z=1;z<=2; z=z+1){
+            for(w=1; w<=5; w=w+1){
+                d = [0; x/1000000000; y/1000000000; z/1000000000; w/1000000000; 0]; # layers
+
+# alternate refractive index vector, for dispersive materials
+                nf = length(f);
+                nd = length(d);
+                n2 = matrix(nd,nf); 
+                n3 = matrix(nd,nf);
+
+                n2(1,1:nf) = 1.52; # prism
+                n2(2,1:nf) = getfdtdindex("YJ-Ag",f,min(f),max(f));
+                n2(3,1:nf) = getfdtdindex("YJ-Au",f,min(f),max(f));
+                n2(4,1:nf) = getfdtdindex("YJ-WS2",f,min(f),max(f));
+                n2(5,1:nf) = getfdtdindex("YJ-Graphene",f,min(f),max(f));
+                n2(6,1:nf) = 1.334; # healthy
+
+                n3(1,1:nf) = 1.52; # prism
+                n3(2,1:nf) = getfdtdindex("YJ-Ag",f,min(f),max(f));
+                n3(3,1:nf) = getfdtdindex("YJ-Au",f,min(f),max(f));
+                n3(4,1:nf) = getfdtdindex("YJ-WS2",f,min(f),max(f));
+                n3(5,1:nf) = getfdtdindex("YJ-Graphene",f,min(f),max(f));
+                n3(6,1:nf) = 1.374; # changed RI
+
+    # get RT using dispersive data (n2), and theta from 0 to 45 deg
+                RT2 = stackrt(n2,d,f,theta);
+                RT3 = stackrt(n3,d,f,theta);
+
+
+                InvRT2=1-RT2.Rp;
+                xp2 = findpeaks(InvRT2);
+    # ?"Min angle value 1: " + num2str(theta(xp2)) + " degrees";
+
+                InvRT3=1-RT3.Rp;
+                xp3 = findpeaks(InvRT3);
+    # ?"Min angle value 2: " + num2str(theta(xp3)) + " degrees";
+
+# find the focal width
+                m = InvRT2(xp2);
+                normInvRT2 = InvRT2/m;
+
+                for(i=xp2;normInvRT2(i)>.5;i=i+1){1;}
+                FWHM = theta(i-1);
+                for(i=xp2;normInvRT2(i)>.5;i=i-1){1;}
+                FWHM = (FWHM - theta(i+1));
+
+                shift = theta(xp3)-theta(xp2);
+                sen = (theta(xp3)-theta(xp2))/0.04;
+                fom = sen/FWHM;
+                
+                #?num2str(1-m);
+                #?num2str(sen);
+                ?num2str(FWHM);
+
+                #?"Angle shift = " + num2str(shift) +" degrees";
+                #?"Sensitivity = " + num2str(sen) + " degrees/RIU";
+                #?"FWHM angles = " + num2str(FWHM) + " degrees";
+                #?"FoM = " + num2str(fom) + " RIU-1";
+            }
+        }
+    }
+}
+
